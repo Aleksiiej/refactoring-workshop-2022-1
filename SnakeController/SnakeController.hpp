@@ -51,9 +51,10 @@ private:
     std::list<Segment> m_segments;
 
 public:
-    Segment assignNewPositionToHead(Segment const& currentHead); //function assigning new position of head created
-    bool checkIfGameLost(Segment& newHead); //function checking if snake bite his tail created
+    Segment assignNewPositionToHead(Segment const& currentHead);
+    bool checkIfTailBitten(Segment& newHead);
     void foodEaten();
+    bool checkIfOutOfBoard(Segment& newHead);
 };
 
 } // namespace Snake

@@ -70,16 +70,14 @@ void Controller::receive(std::unique_ptr<Event> e)
 
         Segment const& currentHead = m_segments.front();
 
-        Segment newHead = assignNewPositionToHead(currentHead); //function assigning new position of head created
+        Segment newHead = assignNewPositionToHead(currentHead);
         
-        bool lost = checkIfGameLost(newHead); //function checking if snake bite his tail created
+        bool lost = checkIfTailBitten(newHead);
 
         if (not lost) {
             if (std::make_pair(newHead.x, newHead.y) == m_foodPosition) {
                 foodEaten();
-            } else if (newHead.x < 0 or newHead.y < 0 or
-                       newHead.x >= m_mapDimension.first or
-                       newHead.y >= m_mapDimension.second) {
+            } else if (checkIfOutOfBoard(newHead)) {
                 m_scorePort.send(std::make_unique<EventT<LooseInd>>());
                 lost = true;
             } else {
@@ -180,7 +178,7 @@ void Controller::receive(std::unique_ptr<Event> e)
     }
 }
 
-Controller::Segment Controller::assignNewPositionToHead(Segment const& currentHead) //function assigning new position of head created
+Controller::Segment Controller::assignNewPositionToHead(Segment const& currentHead)
 {
     Segment newHead;
     newHead.x = currentHead.x + ((m_currentDirection & 0b01) ? (m_currentDirection & 0b10) ? 1 : -1 : 0);
@@ -189,7 +187,7 @@ Controller::Segment Controller::assignNewPositionToHead(Segment const& currentHe
     return newHead;
 }
 
-bool Controller::checkIfGameLost(Segment& newHead) //function checking if snake bite his tail created
+bool Controller::checkIfTailBitten(Segment& newHead)
 {
     for (auto segment : m_segments) {
             if (segment.x == newHead.x and segment.y == newHead.y) {
@@ -204,6 +202,17 @@ void Controller::foodEaten()
 {
     m_scorePort.send(std::make_unique<EventT<ScoreInd>>());
     m_foodPort.send(std::make_unique<EventT<FoodReq>>());
+}
+
+bool Controller::checkIfOutOfBoard(Segment& newHead)
+{
+    if(newHead.x < 0 or newHead.y < 0 or
+    newHead.x >= m_mapDimension.first or
+    newHead.y >= m_mapDimension.second)
+    {
+        return true;
+    }
+    else return false;
 }
 
 } // namespace Snake
