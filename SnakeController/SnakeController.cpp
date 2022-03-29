@@ -76,8 +76,7 @@ void Controller::receive(std::unique_ptr<Event> e)
 
         if (not lost) {
             if (std::make_pair(newHead.x, newHead.y) == m_foodPosition) {
-                m_scorePort.send(std::make_unique<EventT<ScoreInd>>());
-                m_foodPort.send(std::make_unique<EventT<FoodReq>>());
+                foodEaten();
             } else if (newHead.x < 0 or newHead.y < 0 or
                        newHead.x >= m_mapDimension.first or
                        newHead.y >= m_mapDimension.second) {
@@ -199,6 +198,12 @@ bool Controller::checkIfGameLost(Segment& newHead) //function checking if snake 
             }
         }
     return false;
+}
+
+void Controller::foodEaten()
+{
+    m_scorePort.send(std::make_unique<EventT<ScoreInd>>());
+    m_foodPort.send(std::make_unique<EventT<FoodReq>>());
 }
 
 } // namespace Snake

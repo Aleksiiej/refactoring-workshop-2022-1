@@ -53,6 +53,7 @@ private:
 public:
     Segment assignNewPositionToHead(Segment const& currentHead); //function assigning new position of head created
     bool checkIfGameLost(Segment& newHead); //function checking if snake bite his tail created
+    void foodEaten();
 };
 
 } // namespace Snake
