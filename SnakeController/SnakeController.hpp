@@ -55,6 +55,7 @@ public:
     bool checkIfTailBitten(Segment& newHead);
     void foodEaten();
     bool checkIfOutOfBoard(Segment& newHead);
+    void moveSegments(Segment& newHead);
 };
 
 } // namespace Snake

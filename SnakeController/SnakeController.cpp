@@ -95,20 +95,7 @@ void Controller::receive(std::unique_ptr<Event> e)
         }
 
         if (not lost) {
-            m_segments.push_front(newHead);
-            DisplayInd placeNewHead;
-            placeNewHead.x = newHead.x;
-            placeNewHead.y = newHead.y;
-            placeNewHead.value = Cell_SNAKE;
-
-            m_displayPort.send(std::make_unique<EventT<DisplayInd>>(placeNewHead));
-
-            m_segments.erase(
-                std::remove_if(
-                    m_segments.begin(),
-                    m_segments.end(),
-                    [](auto const& segment){ return not (segment.ttl > 0); }),
-                m_segments.end());
+            moveSegments(newHead);
         }
     } catch (std::bad_cast&) {
         try {
@@ -213,6 +200,24 @@ bool Controller::checkIfOutOfBoard(Segment& newHead)
         return true;
     }
     else return false;
+}
+
+void Controller::moveSegments(Segment& newHead)
+{
+    m_segments.push_front(newHead);
+            DisplayInd placeNewHead;
+            placeNewHead.x = newHead.x;
+            placeNewHead.y = newHead.y;
+            placeNewHead.value = Cell_SNAKE;
+
+            m_displayPort.send(std::make_unique<EventT<DisplayInd>>(placeNewHead));
+
+            m_segments.erase(
+                std::remove_if(
+                    m_segments.begin(),
+                    m_segments.end(),
+                    [](auto const& segment){ return not (segment.ttl > 0); }),
+                m_segments.end());
 }
 
 } // namespace Snake
